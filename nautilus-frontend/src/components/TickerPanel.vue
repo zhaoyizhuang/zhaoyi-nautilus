@@ -1,12 +1,6 @@
 <template>
   <div>
     <div>
-      node env: {{ nodeEnv }}
-    </div>
-    <div>
-      back end: {{ backendURL }}
-    </div>
-    <div>
       Enter the stock ticker
     </div>
     <textarea v-model.trim="ticker"/>
@@ -16,25 +10,27 @@
     <div v-if="emptyData">
       No data found
     </div>
-    <li v-for="i in stockData" :key="i.Date">
-      {{ i }}
-    </li>
   </div>
 </template>
 
 <script>
 import stockService from '../services/stockService'
-import Config from '../services/config'
+import { inject } from 'vue'
 
 export default {
   name: 'TickerPanel',
+  setup () {
+    const stockData = inject('stockDataKey')
+    const stockName = inject('stockNameKey')
+    return {
+      stockData,
+      stockName
+    }
+  },
   data () {
     return {
       ticker: '^GSPC',
-      stockData: [],
-      emptyData: false,
-      nodeEnv: Config.NODE_ENV,
-      backendURL: Config.BACKEND_URL
+      emptyData: false
     }
   },
   methods: {
@@ -46,6 +42,7 @@ export default {
           } else {
             this.emptyData = false
             this.stockData = data.data
+            this.stockName = this.ticker
           }
         }
       )
