@@ -1,6 +1,12 @@
 <template>
   <div>
     <div>
+      node env: {{ nodeEnv }}
+    </div>
+    <div>
+      back end: {{ backendURL }}
+    </div>
+    <div>
       Enter the stock ticker
     </div>
     <textarea v-model.trim="ticker"/>
@@ -18,6 +24,7 @@
 
 <script>
 import stockService from '../services/stockService'
+import Config from '../services/config'
 
 export default {
   name: 'TickerPanel',
@@ -25,7 +32,9 @@ export default {
     return {
       ticker: '^GSPC',
       stockData: [],
-      emptyData: false
+      emptyData: false,
+      nodeEnv: Config.NODE_ENV,
+      backendURL: Config.BACKEND_URL
     }
   },
   methods: {
