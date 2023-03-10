@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <div>
-      {{ stockName }}
-    </div>
+  <div class="stock-chart">
     <ECharts v-if="stockData.length !== 0" class="chart" :option="option"/>
   </div>
 </template>
@@ -47,7 +44,6 @@ export default {
   setup () {
     const stockData = inject('stockDataKey')
     const stockName = inject('stockNameKey')
-    console.log(stockData)
 
     return {
       stockData,
@@ -235,5 +231,8 @@ export default {
 <style scoped>
 .chart {
   height: 500px;
+}
+.stock-chart {
+  padding: 10px;
 }
 </style>

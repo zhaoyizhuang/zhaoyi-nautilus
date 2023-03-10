@@ -28,3 +28,8 @@ class StockViewSetTestCase(TestCase):
         expected_df = pd.DataFrame({'3D-SMA': [np.nan, np.nan, 20, 30, 40, 53.33]})
         assert_series_equal(df['3D-SMA'], expected_df['3D-SMA'])
 
+    def test_get_info(self):
+        view_set = StockViewSet()
+        assert view_set._get_info('^GSPC') == ('^GSPC', 'S&P 500')
+        assert view_set._get_info('S&P 500') == ('^GSPC', 'S&P 500')
+
