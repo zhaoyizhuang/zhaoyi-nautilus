@@ -41,12 +41,15 @@ export default {
             this.emptyData = true
           } else {
             this.emptyData = false
-            this.stockData = data.data
+            this.stockData = data
             this.stockName = this.ticker
           }
         }
       )
     }
+  },
+  mounted() {
+    this.retrieveStockData('^GSPC')
   }
 }
 </script>
