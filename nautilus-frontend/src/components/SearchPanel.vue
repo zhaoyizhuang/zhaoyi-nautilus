@@ -20,24 +20,32 @@
         No data found
       </div>
     </div>
-    <div class="interval" v-for="(interval, idx) in intervals" :key="interval">
-      <IntervalSelector
-        :interval="interval"
-        :selected="selectedIdx === idx"
-        @clicked="clicked(idx)"/>
+    <div class="tool-bar">
+      <button @click="showComparisonModal = true">
+        Comparison
+      </button>
+      <div class="interval" v-for="(interval, idx) in intervals" :key="interval">
+        <IntervalSelector
+          :interval="interval"
+          :selected="selectedIdx === idx"
+          @clicked="clicked(idx)"/>
+      </div>
     </div>
+    <ComparisonModal :show="showComparisonModal" @close="showComparisonModal = false"/>
   </div>
 </template>
 
 <script>
 import stockService from '../services/stockService'
 import IntervalSelector from './IntervalSelector.vue'
+import ComparisonModal from './ComparisonModal.vue'
 import { inject } from 'vue'
 
 export default {
   name: 'SearchPanel',
   components: {
-    IntervalSelector
+    IntervalSelector,
+    ComparisonModal
   },
   setup () {
     const stockData = inject('stockDataKey')
@@ -53,7 +61,8 @@ export default {
       currentValue: 'S&P 500',
       emptyData: false,
       selectedIdx: 4,
-      intervals: ['5D', '60D', 'YTD', '1Y', '2Y']
+      intervals: ['5D', '60D', 'YTD', '1Y', '2Y'],
+      showComparisonModal: false
     }
   },
   methods: {
