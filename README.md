@@ -10,6 +10,8 @@ The Django server provides a restful api - '/stock/{pk}/?interval={interval}' wh
 
 The endpoint uses yfinance library to retrieve stock data, and it is tested in ./nautilus/tests/tests_views.py
 
+Django part's code uses lint tools flake8, isort and black to make the code in a better format. 
+
 django-cors-headers is introduced to deal with the CORS problem. All libraries/packages needed for the Django server is listed in the nautilus/requirements.txt
 
 ### Vue.js part
