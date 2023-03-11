@@ -11,7 +11,8 @@ class StockViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """
-        request: incoming request
+        request: incoming request with query params interval =  x where 
+                 x in ['5D', '60D', 'YTD', '1Y', '2Y']
         pk: Ticker of the stock
 
         Given Ticker, retrive stock data for the last 2 years 
@@ -51,8 +52,19 @@ class StockViewSet(viewsets.ViewSet):
         except (KeyError, IndexError):
             return Response(data={'data': []})
         else:
+            interval = request.query_params.get('interval')
+            time_format = '%Y-%m-%d'
+            time_interval = '1d'
+            if interval == '5D':
+                time_format = '%Y-%m-%d %H:%M'
+                time_interval = '5m'
+            elif interval == '60D':
+                time_format = '%Y-%m-%d %H:%M'
+                time_interval = '60m'
+                
+
             stock = yf.Ticker(ticker)
-            hist = stock.history(period='2y')
+            hist = stock.history(period=interval, interval=time_interval)
 
             if hist.empty:
                 return Response(data={'data': []})
@@ -70,7 +82,7 @@ class StockViewSet(viewsets.ViewSet):
             result = json.loads(json_format_data)
             result['name'] = name + ' (' + ticker + ')'
             result['index'] = [
-                datetime.datetime.fromtimestamp(x/1000.0).strftime('%Y-%m-%d') 
+                datetime.datetime.fromtimestamp(x/1000.0).strftime(time_format) 
                 for x in result['index']
                 ]
             result['50DSMA'] = pd.Series(hist['50D-SMA']).fillna('').tolist()

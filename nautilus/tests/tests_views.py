@@ -9,13 +9,13 @@ client = Client()
 
 class StockViewSetTestCase(TestCase):
     def test_empty_ticker_data(self):
-        response = client.get('/stock/^GSPC3', follow=True)
+        response = client.get('/stock/^GSPC3', {'interval': '5D'}, follow=True)
 
         assert response.status_code == 200
         assert response.data == {'data': []}
 
     def test_successfully_retrieve_data(self):
-        response = client.get('/stock/^GSPC', follow=True)
+        response = client.get('/stock/^GSPC', {'interval': '5D'}, follow=True)
 
         assert response.status_code == 200
 

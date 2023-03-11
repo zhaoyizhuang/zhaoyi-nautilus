@@ -1,32 +1,44 @@
 <template>
-  <div class="search-panel">
-    <div class="search-bar">
-      <input 
-        class="text-area" 
-        v-model.trim="searchValue"
-        placeholder="Search for ticker symbols or companies"
-        @keypress.enter="retrieveStockData"
-      />
-      <button 
-        class="search-btn" 
-        @click="retrieveStockData" 
-        :disabled="searchValue == ''"
-      >
-          Search
-      </button>
+  <div class="panel">
+    <div class="search-panel">
+      <div class="search-bar">
+        <input
+          class="text-area"
+          v-model.trim="searchValue"
+          placeholder="Search for ticker symbols or companies"
+          @keypress.enter="retrieveStockData"
+        />
+        <button
+          class="search-btn"
+          @click="retrieveStockData"
+          :disabled="searchValue == ''"
+        >
+            Search
+        </button>
+      </div>
+      <div v-if="emptyData" class='search-msg'>
+        No data found
+      </div>
     </div>
-    <div v-if="emptyData" class='search-msg'>
-      No data found
+    <div class="interval" v-for="(interval, idx) in intervals" :key="interval">
+      <IntervalSelector
+        :interval="interval"
+        :selected="selectedIdx === idx"
+        @clicked="clicked(idx)"/>
     </div>
   </div>
 </template>
 
 <script>
 import stockService from '../services/stockService'
+import IntervalSelector from './IntervalSelector.vue'
 import { inject } from 'vue'
 
 export default {
   name: 'SearchPanel',
+  components: {
+    IntervalSelector
+  },
   setup () {
     const stockData = inject('stockDataKey')
     const stockName = inject('stockNameKey')
@@ -38,12 +50,19 @@ export default {
   data () {
     return {
       searchValue: 'S&P 500',
-      emptyData: false
+      currentValue: 'S&P 500',
+      emptyData: false,
+      selectedIdx: 4,
+      intervals: ['5D', '60D', 'YTD', '1Y', '2Y']
     }
   },
   methods: {
     retrieveStockData () {
-      stockService.getStock(this.searchValue).then(
+      const id = this.searchValue ? this.searchValue : this.currentValue
+      stockService.getStock(
+        id,
+        this.intervals[this.selectedIdx]
+      ).then(
         data => {
           if (data.data?.length === 0) {
             this.emptyData = true
@@ -51,14 +70,19 @@ export default {
             this.emptyData = false
             this.stockData = data
             this.stockName = data.name
+            this.currentValue = id
           }
+          this.searchValue = ''
         }
       )
-      this.searchValue = ''
+    },
+    clicked (idx) {
+      this.selectedIdx = idx
+      this.retrieveStockData()
     }
   },
-  mounted() {
-    this.retrieveStockData(this.searchValue)
+  mounted () {
+    this.retrieveStockData()
   }
 }
 </script>
@@ -77,11 +101,11 @@ export default {
   color: rgb(247, 96, 96);
 }
 .text-area {
-  margin: auto;
+  margin-left: 7%;
   width: 50%;
   height: 20px;
-  font-family:"Times New Roman", Times, serif;  
-  font-size: 16px; 
+  font-family: "Times New Roman", Times, serif;
+  font-size: 16px;
   background-color: rgba(255, 255, 255, 0.719);
 }
 .search-btn {
@@ -101,5 +125,11 @@ export default {
 }
 .search-bar {
   padding-left: 25%;
+}
+.interval {
+  display: inline-block;
+  position: relative;
+  left: 42%;
+  margin: 5px;
 }
 </style>

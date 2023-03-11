@@ -1,15 +1,20 @@
 <template>
   <div class="stock-chart">
-    <ECharts v-if="stockData.length !== 0" class="chart" :option="option"/>
+    <ECharts
+      v-if="stockData.length !== 0"
+      class="chart"
+      autoresize
+      :option="option"
+    />
   </div>
 </template>
 
 <script>
 import { inject } from 'vue'
 import ECharts from 'vue-echarts'
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { CandlestickChart, LineChart, BarChart } from "echarts/charts";
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { CandlestickChart, LineChart, BarChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
@@ -18,8 +23,8 @@ import {
   DataZoomComponent,
   ToolboxComponent,
   BrushComponent,
-  VisualMapComponent,
-} from "echarts/components";
+  VisualMapComponent
+} from 'echarts/components'
 
 use([
   CanvasRenderer,
@@ -34,7 +39,7 @@ use([
   VisualMapComponent,
   LineChart,
   BarChart
-]);
+])
 
 export default {
   name: 'StockChart',
@@ -52,12 +57,12 @@ export default {
   },
   data () {
     return {
-      upColor: '#00da3c',
-      downColor: '#ec0000',
+      upColor: '#00a32d',
+      downColor: '#ec0000'
     }
   },
   computed: {
-    option() {
+    option () {
       return {
         animation: false,
         legend: {
@@ -78,7 +83,7 @@ export default {
         xAxis: [{
           type: 'category',
           data: this.stockData.index,
-          axisLine: { lineStyle: { color: '#8392A5' } },
+          axisLine: { lineStyle: { color: '#8392A5' } }
         },
         {
           type: 'category',
@@ -88,13 +93,13 @@ export default {
           axisLine: { onZero: false },
           axisTick: { show: false },
           splitLine: { show: false },
-          axisLabel: { show: false },
+          axisLabel: { show: false }
         }],
         yAxis: [{
           scale: true,
           axisLine: { lineStyle: { color: '#8392A5' } },
           splitArea: { show: true }
-        }, 
+        },
         {
           scale: true,
           type: 'value',
@@ -108,13 +113,13 @@ export default {
         grid: [{
           left: '10%',
           right: '8%',
-          height: '50%'
+          height: '65%'
         },
         {
           left: '10%',
           right: '8%',
-          top: '72%',
-          height: '16%'
+          top: '78%',
+          height: '10%'
         }],
         toolbox: {
           feature: {
@@ -230,7 +235,7 @@ export default {
 
 <style scoped>
 .chart {
-  height: 500px;
+  height: 700px;
 }
 .stock-chart {
   padding: 10px;
