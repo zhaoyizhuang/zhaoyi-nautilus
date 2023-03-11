@@ -9,13 +9,13 @@ client = Client()
 
 class StockViewSetTestCase(TestCase):
     def test_empty_ticker_data(self):
-        response = client.get('/stock/^GSPC3', follow=True)
+        response = client.get('/stock/^GSPC3', {'interval': '5D'}, follow=True)
 
         assert response.status_code == 200
         assert response.data == {'data': []}
 
     def test_successfully_retrieve_data(self):
-        response = client.get('/stock/^GSPC', follow=True)
+        response = client.get('/stock/^GSPC', {'interval': '5D'}, follow=True)
 
         assert response.status_code == 200
 
@@ -27,4 +27,9 @@ class StockViewSetTestCase(TestCase):
         
         expected_df = pd.DataFrame({'3D-SMA': [np.nan, np.nan, 20, 30, 40, 53.33]})
         assert_series_equal(df['3D-SMA'], expected_df['3D-SMA'])
+
+    def test_get_info(self):
+        view_set = StockViewSet()
+        assert view_set._get_info('^GSPC') == ('^GSPC', 'S&P 500')
+        assert view_set._get_info('S&P 500') == ('^GSPC', 'S&P 500')
 
