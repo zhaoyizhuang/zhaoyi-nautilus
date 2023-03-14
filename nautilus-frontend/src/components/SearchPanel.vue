@@ -6,7 +6,7 @@
           class="text-area"
           v-model.trim="searchValue"
           placeholder="Search for ticker symbols or companies"
-          @keypress.enter="retrieveStockData"
+          @keypress.enter="enterToAdd"
         />
         <button
           class="search-btn"
@@ -20,24 +20,57 @@
         No data found
       </div>
     </div>
-    <div class="interval" v-for="(interval, idx) in intervals" :key="interval">
-      <IntervalSelector
-        :interval="interval"
-        :selected="selectedIdx === idx"
-        @clicked="clicked(idx)"/>
+    <div class="tool-bar">
+      <button class="tools comparison-tool" @click="showComparisonModal = true">
+        Comparison
+      </button>
+      <div class="tools" v-for="(interval, idx) in intervals" :key="interval">
+        <IntervalSelector
+          :interval="interval"
+          :selected="selectedIdx === idx"
+          @clicked="clicked(idx)"/>
+      </div>
     </div>
+    <ComparisonModal
+     :show="showComparisonModal"
+    >
+      <template v-slot:body>
+        <input
+         class="comparison-input"
+         v-model.trim="comparisonValue"
+         placeholder="Add a comparison stock"
+        />
+      </template>
+      <template v-slot:footer>
+        <button
+          class="search-btn"
+          @click="closeModal"
+        >
+          Close
+        </button>
+        <button
+          class="search-btn comparison-btn"
+          @click="addComparison"
+          :disabled="comparisonValue == ''"
+        >
+          Add
+        </button>
+      </template>
+    </ComparisonModal>
   </div>
 </template>
 
 <script>
 import stockService from '../services/stockService'
 import IntervalSelector from './IntervalSelector.vue'
+import ComparisonModal from './ComparisonModal.vue'
 import { inject } from 'vue'
 
 export default {
   name: 'SearchPanel',
   components: {
-    IntervalSelector
+    IntervalSelector,
+    ComparisonModal
   },
   setup () {
     const stockData = inject('stockDataKey')
@@ -51,12 +84,19 @@ export default {
     return {
       searchValue: 'S&P 500',
       currentValue: 'S&P 500',
+      comparisonValue: '',
       emptyData: false,
       selectedIdx: 4,
-      intervals: ['5D', '60D', 'YTD', '1Y', '2Y']
+      intervals: ['5D', '60D', 'YTD', '1Y', '2Y'],
+      showComparisonModal: false
     }
   },
   methods: {
+    enterToAdd () {
+      if (this.searchValue !== '') {
+        this.retrieveStockData()
+      }
+    },
     retrieveStockData () {
       const id = this.searchValue ? this.searchValue : this.currentValue
       stockService.getStock(
@@ -79,6 +119,13 @@ export default {
     clicked (idx) {
       this.selectedIdx = idx
       this.retrieveStockData()
+    },
+    addComparison () {
+      this.closeModal()
+    },
+    closeModal () {
+      this.showComparisonModal = false
+      this.comparisonValue = ''
     }
   },
   mounted () {
@@ -126,10 +173,35 @@ export default {
 .search-bar {
   padding-left: 25%;
 }
-.interval {
+
+.tools {
   display: inline-block;
   position: relative;
-  left: 42%;
+  left: 37%;
   margin: 5px;
+}
+
+.comparison-input {
+  width: 100%;
+  height: 20px;
+  outline: 0;
+  border-width: 0 0 2px;
+  border-color: rgb(185, 221, 236);
+}
+.comparison-input:focus {
+  border-color: rgb(0, 183, 255);
+}
+
+.comparison-btn {
+  float: right;
+}
+
+.comparison-tool {
+  border-width: 0;
+  background-color: white;
+}
+.comparison-tool:hover {
+  color: rgb(0, 183, 255);
+  cursor: pointer;
 }
 </style>
