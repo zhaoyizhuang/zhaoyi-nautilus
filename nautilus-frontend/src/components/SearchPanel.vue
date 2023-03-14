@@ -105,7 +105,7 @@ export default {
 }
 .search-msg {
   padding-top: 3px;
-  padding-left: 25%;
+  padding-left: 30%;
   padding-bottom: 5px;
   color: rgb(247, 96, 96);
 }
